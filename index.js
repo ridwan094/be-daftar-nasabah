@@ -3,10 +3,11 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const sequelize = require('./models').sequelize;
 const daftarNasabahRoutes = require('./routes/daftarNasabah');
+const forgotPasswordRoutes = require('./routes/forgotPassword');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3006;
 
 // Middleware
 app.use(cors({
@@ -20,6 +21,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api', daftarNasabahRoutes);
+app.use('/api', forgotPasswordRoutes);
 
 // Start Server
 sequelize.sync()
