@@ -23,3 +23,7 @@ exports.updateDaftarNasabah = async (id, data) => {
 exports.deleteDaftarNasabah = async (id) => {
     return await DaftarNasabah.destroy({ where: { id } });
 };
+
+exports.findDaftarNasabahByEmail = async (email) => {
+    return await DaftarNasabah.findOne({ where: { email }});
+};
