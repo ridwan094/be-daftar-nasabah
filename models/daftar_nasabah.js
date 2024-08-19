@@ -42,6 +42,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
+    role: {
+      type: DataTypes.ENUM('Admin', 'Operator', 'Nasabah'),
+      defaultValue: 'Nasabah',
+      allowNull: false
+    }
   }, {
     tableName: 'daftar_nasabah'
   });

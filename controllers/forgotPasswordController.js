@@ -1,25 +1,36 @@
 const forgotPasswordService = require('../services/ForgotPasswordService');
 
 exports.requestResetPassword = async (req, res) => {
-    const { email } = req.body;
-
     try {
-        await forgotPasswordService.createForgotPassword(email);
-        const inboxUrl =  `https://mailtrap.io/inboxes/${process.env.MAILTRAP_INBOX_ID}/messages`;
-        res.status(200).json({ message: 'Link reset password telah dikirim ke email Anda', inboxLink: inboxUrl });
+        const { email } = req.body;
+        const { id, token } = await forgotPasswordService.createForgotPassword(email);
+        res.status(200).json({
+            status: 200,
+            message: 'Token password telah dikirim ke email Anda',
+            email,
+            token
+        }); 
     } catch (error) {
-        console.error('Error during forgot password request:', error);
-        res.status(400).json({ message: 'Gagal membuat forgot password', error: error.message });
+        res.status(400).json({
+            status: 400, 
+            message: 'Gagal membuat forgot password', 
+            error: error.message });
     }
 };
 
 exports.resetPassword = async (req, res) => {
     try {
-        const { token, newPassword } = req.body;
-        const response = await forgotPasswordService.resetPassword(token, newPassword);
-        return res.status(200).json(response);
+        const { token, email, newPassword } = req.body;
+        const result = await forgotPasswordService.resetPassword(token, email, newPassword);
+        res.status(200).json({
+            status: 200, 
+            message: 'Password berhasil direset',
+            result});
     } catch (error) {
-        console.error('Error during reset password:', error.message);
-        return res.status(400).json({ message: 'Gagal mereset password', error: error.message });
+        res.status(400).json({ 
+            status: 400,
+            message: 'Gagal mereset password', 
+            error: error.message 
+        });
     }
 };

@@ -12,7 +12,7 @@ if (!SECRET_KEY) {
 }
 
 exports.register = async (data) => {
-    const { username, password, email, no_telp, nik, alamat, jenis_kelamin, usia } = data;
+    const { username, password, email, no_telp, nik, alamat, jenis_kelamin, usia, role } = data;
 
     let normalizedGender = '';
     if (jenis_kelamin.toLowerCase() === 'laki-laki' || jenis_kelamin.toLowerCase() === 'l' || jenis_kelamin.toLowerCase() === 'm' || jenis_kelamin.toLowerCase() === 'pria' || jenis_kelamin.toUpperCase() === 'L') {
@@ -34,7 +34,8 @@ exports.register = async (data) => {
         nik,
         alamat,
         jenis_kelamin: normalizedGender,
-        usia
+        usia,
+        role: role || 'Nasabah'
     });
 
     const response = nasabah.toJSON();
@@ -42,7 +43,6 @@ exports.register = async (data) => {
 
     return response;
 };
-
 
 exports.login = async (data) => {
     const { username, password } = data;
@@ -57,17 +57,19 @@ exports.login = async (data) => {
         throw new Error('Invalid credentials');
     }
 
-    const token = jwt.sign({ id: user.id, username: user.username }, SECRET_KEY, { expiresIn: '1h' });
+    const token = jwt.sign(
+        { id: user.id, username: user.username, role: user.role }, process.env.SECRET_KEY, { expiresIn: '1h' });
+    
     return { 
         userId: user.id,
         username: user.username,
-        nama: user.namam,
         email: user.email,
         no_telp: user.no_telp,
         nik: user.nik,
         alamat: user.alamat,
         jenis_kelamin: user.jenis_kelamin,
         usia: user.usia,
+        role: user.role,
         token 
     };
 };
@@ -82,12 +84,16 @@ exports.getById = async (id) => {
 };
 
 exports.getAll = async () => {
-    const nasabahList = await daftarNasabahRepository.findAllDaftarNasabah();
-
-    return nasabahList.map(nasabah => {
-        nasabah.usia = `${nasabah.usia} tahun`;
-        return nasabah;
-    })
+    try {
+        const nasabahList = await daftarNasabahRepository.findAllDaftarNasabah();
+        return nasabahList.map(nasabah => {
+            nasabah.usia = `${nasabah.usia} tahun`;
+            return nasabah;
+        });
+    } catch (error) {
+        console.error('Error in service getAll:', error);
+        throw new Error('Failed to get all nasabah');
+    }
 };
 
 exports.update = async (id, data) => {

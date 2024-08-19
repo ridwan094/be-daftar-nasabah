@@ -9,6 +9,7 @@ exports.register = async (req, res) => {
     }
 };
 
+
 exports.getDaftarNasabahById = async (req, res) => {
     try {
         const result = await daftarNasabahService.getById(req.params.id);
@@ -27,7 +28,8 @@ exports.getAllDaftarNasabah = async (req, res) => {
         const result = await daftarNasabahService.getAll();
         res.json(result);
     } catch (err) {
-        res.status(400).json({ error: err.message });
+        console.error('Error in getAllDaftarNasabah:', err);
+        res.status(500).json({ error: 'Failed to retrieve nasabah' });
     }
 };
 
