@@ -97,22 +97,29 @@ exports.getAll = async () => {
 };
 
 exports.update = async (id, data) => {
+    // Jika password diisi, lakukan hashing, jika tidak, biarkan password yang lama
+    if (data.password) {
+        data.password = await bcrypt.hash(data.password, 10);
+    } else {
+        // Ambil data nasabah dari database tanpa mengubah password
+        const existingNasabah = await daftarNasabahRepository.findDaftarNasabahById(id);
+        if (existingNasabah) {
+            data.password = existingNasabah.password;
+        }
+    }
+
     if (!data.jenis_kelamin) {
         throw new Error('Jenis kelamin harus diisi');
     }
 
     let normalizedGender = '';
     const gender = data.jenis_kelamin.toLowerCase();
-    if (gender === 'laki-laki' || gender === 'l' || gender === 'm' || gender === 'pria' || gender === 'L') {
+    if (['laki-laki', 'l', 'm', 'pria', 'L'].includes(gender)) {
         normalizedGender = 'Laki-laki';
-    } else if (gender === 'perempuan' || gender === 'p' || gender === 'w' || gender === 'wanita' || gender === 'P') {
+    } else if (['perempuan', 'p', 'w', 'wanita', 'P'].includes(gender)) {
         normalizedGender = 'Perempuan';
     } else {
         throw new Error('Anda menginputkan data jenis kelamin yang salah.');
-    }
-
-    if (data.password) {
-        data.password = await bcrypt.hash(data.password, 10);
     }
     
     await daftarNasabahRepository.updateDaftarNasabah(id, {
@@ -126,7 +133,6 @@ exports.update = async (id, data) => {
     
     return updatedNasabah;
 };
-
 
 exports.delete = async (id) => {
     return await daftarNasabahRepository.deleteDaftarNasabah(id);

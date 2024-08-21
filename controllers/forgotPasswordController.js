@@ -6,9 +6,9 @@ exports.requestResetPassword = async (req, res) => {
         const { id, token } = await forgotPasswordService.createForgotPassword(email);
         res.status(200).json({
             status: 200,
-            message: 'Token password telah dikirim ke email Anda',
             email,
-            token
+            token,
+            message: 'Token password telah dikirim ke email Anda'
         }); 
     } catch (error) {
         res.status(400).json({

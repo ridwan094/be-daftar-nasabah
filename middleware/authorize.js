@@ -7,7 +7,7 @@ module.exports = (roles = []) => {
         console.log('Role in request:', req.user.role);
         const { role } = req.user;
 
-        if(roles.length && !roles.includes(role)) {
+        if (roles.length && !roles.includes(role)) {
             return res.status(403).json({ message: 'Forbidden' });
         }
 
