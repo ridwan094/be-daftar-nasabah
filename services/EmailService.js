@@ -2,8 +2,9 @@ const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const transporter = nodemailer.createTransport({
-    host: "smtp.mailtrap.io",
-    port: 2525,
+    host: "live.smtp.mailtrap.io",
+    port: 587,
+    secure: false,
     auth: {
         user: process.env.MAILTRAP_USER,
         pass: process.env.MAILTRAP_PASS
@@ -12,8 +13,8 @@ const transporter = nodemailer.createTransport({
 
 const sendResetPasswordEmail = async (email, token) => {
     const mailOptions = {
-        from: 'ridwansaefudin97@gmail.com',
-        to: email,
+        from: 'info@demomailtrap.com',
+        to: "ridwansaefudin025@gmail.com",
         subject: 'Reset Password',
         text: `Here is your password reset token: ${token}`
     };

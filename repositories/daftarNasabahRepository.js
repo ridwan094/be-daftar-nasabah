@@ -13,7 +13,12 @@ exports.findDaftarNasabahByUsername = async (username) => {
 };
 
 exports.findAllDaftarNasabah = async () => {
-    return await DaftarNasabah.findAll();
+    try {
+        return await DaftarNasabah.findAll();
+    } catch (error) {
+        console.error('Error in repository findAllDaftarNasabah:', error); // Tambahkan ini untuk debug
+        throw error;
+    }
 };
 
 exports.updateDaftarNasabah = async (id, data) => {
